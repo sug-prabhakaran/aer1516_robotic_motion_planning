@@ -71,7 +71,7 @@ def rrt_planner(rrt_dubins, display_map=False):
     i = 0
     while i < rrt_dubins.max_iter:
         i += 1
-
+        print("\niter #:", i)
         # Generate a random vehicle state (x, y, yaw)
         position = np.around(17*np.random.rand(2)-2,1)            # random x, y between (-2, 15)
         heading = np.deg2rad(np.around(360*np.random.rand(1),1))  # random theta between (0, 360)
@@ -109,9 +109,12 @@ def rrt_planner(rrt_dubins, display_map=False):
         if rrt_dubins.calc_dist_to_goal(new_node.x, new_node.y) < 1:
             print("Iters:", i, ", number of nodes:", len(rrt_dubins.node_list))
             rrt_dubins.node_list.append(rrt_dubins.goal)
-            return rrt_dubins.node_list
+            break
 
-    if i == 5:                                        #rrt_dubins.max_iter:
+        if i > 25:
+            break
+
+    if i == rrt_dubins.max_iter:
         print('reached max iterations')
 
     # Return path, which is a list of nodes leading to the goal...
@@ -123,5 +126,6 @@ def find_nearest_node(new_node, node_list):
     for node in node_list:
         d = ((new_node.x - node.x)**2 + (new_node.y - node.y)**2)**(1/2)
         if d < shortest_d:
-            closest_node = node   
+            closest_node = node
+            shortest_d = d 
     return closest_node

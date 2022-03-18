@@ -315,6 +315,7 @@ def main():
 
     print("start:", start, "goal:", goal)
     print("bounds:", rrt_dubins.x_lim, rrt_dubins.y_lim)
+    print("path:", path)
 
     # Draw final path
     if show_final_plot:
