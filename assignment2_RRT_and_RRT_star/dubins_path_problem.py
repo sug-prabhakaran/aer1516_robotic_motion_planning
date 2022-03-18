@@ -225,6 +225,7 @@ class RRT_dubins_problem():
         for node in self.node_list:
             if node.parent:
                 plt.plot(node.path_x, node.path_y, "-g")
+                plt.plot(node.x, node.y, "xb")
 
         for (ox, oy, size) in self.obstacle_list:
             self.plot_circle(ox, oy, size)
@@ -305,12 +306,16 @@ def main():
     is_path_valid = check_path(rrt_dubins, path_node_list)
     path = get_path(path_node_list)
 
-    if not path:
-        print(f'Test Failed: Given path is empty\n Visualize the path to debug')
-        return
-    if not is_path_valid:
-        print(f'Test Failed: Given path is not valid\n Visualize the path to debug')
-        return
+    # if not path:
+    #     print(f'Test Failed: Given path is empty\n Visualize the path to debug')
+    #     return
+    # if not is_path_valid:
+    #     print(f'Test Failed: Given path is not valid\n Visualize the path to debug')
+    #     return
+
+    print("start:", start, "goal:", goal)
+    print("bounds:", rrt_dubins.x_lim, rrt_dubins.y_lim)
+
     # Draw final path
     if show_final_plot:
         rrt_dubins.draw_graph()
