@@ -44,7 +44,7 @@ DO(s) and DONT(s)
 1.  Do not rename the file rrt_planner.py for submission.
 2.  Do not change change the PLANNING function signature.
 3.  Do not import anything other than what is already imported in this file.
-4.  You can write more function in this file in order to reduce code repitition
+4.  You can write more function in this file in order to reduce code repetition
     but these function can only be used inside the PLANNING function.
     (since only the planning function will be imported)
 """
@@ -71,32 +71,24 @@ def rrt_planner(rrt_dubins, display_map=False):
     i = 0
     while i < rrt_dubins.max_iter:
         i += 1
-        print("\niter #:", i)
+
         # Generate a random vehicle state (x, y, yaw)
-        position = np.around(17*np.random.rand(2)-2,1)            # random x, y between (-2, 15)
-        heading = np.deg2rad(np.around(360*np.random.rand(1),1))  # random theta between (0, 360)
-        rand_state = np.concatenate([position, heading])
-        #print("rand_state:", rand_state)
-        new_node = rrt_dubins.Node(rand_state[0], rand_state[1], rand_state[2])
+        if i % 20 == 0:
+            new_node = rrt_dubins.goal                                # sample goal every 10 iter.    
+        else:    
+            position = np.around(17*np.random.rand(2)-2,1)            # random x, y between (-2, 15)
+            heading = np.deg2rad(np.around(360*np.random.rand(1),1))  # random theta between (0, 360)
+            rand_state = np.concatenate([position, heading])
+            new_node = rrt_dubins.Node(rand_state[0], rand_state[1], rand_state[2])
 
         # Find an existing node nearest to the random vehicle state
-        print("\nnew_node:")
-        new_node.print_node()
         nearest_node = find_nearest_node(new_node, rrt_dubins.node_list)
-        #print("nearest_node:")
-        #nearest_node.print_node()
-        new_node_prop = rrt_dubins.propogate(nearest_node, new_node)
-        print("new_node, parent:")
-        new_node_prop.print_node(), new_node_prop.parent.print_node()
-    
-        print("\nNodes from node_list:")
-        for j, node in enumerate(rrt_dubins.node_list):
-            print(j,": "), node.print_node()
+        new_node = rrt_dubins.propogate(nearest_node, new_node)
 
         # Check if the path between nearest node and random state has obstacle collision
         # Add the node to nodes_list if it is valid
-        if rrt_dubins.check_collision(new_node_prop):
-            rrt_dubins.node_list.append(new_node_prop) # Storing all valid nodes
+        if rrt_dubins.check_collision(new_node):
+            rrt_dubins.node_list.append(new_node) # Storing all valid nodes
         else:
             continue
 
@@ -105,19 +97,23 @@ def rrt_planner(rrt_dubins, display_map=False):
         if display_map:
             rrt_dubins.draw_graph()
 
-        # Check if new_node is close to goal
-        if rrt_dubins.calc_dist_to_goal(new_node.x, new_node.y) < 1:
-            print("Iters:", i, ", number of nodes:", len(rrt_dubins.node_list))
-            rrt_dubins.node_list.append(rrt_dubins.goal)
-            break
-
-        if i > 25:
-            break
+        # Check if goal is reached
+        if new_node.is_state_identical(rrt_dubins.goal):
+            print("goal found at iter:", i)
+            # back calculate path starting at goal node and traversing each node's parent
+            path_node_list = back_traverse_nodes(new_node)
+            return path_node_list
+        
+        # # Check if new_node is close to goal
+        # if rrt_dubins.calc_dist_to_goal(new_node.x, new_node.y) < 1:
+        #     print("Iters:", i, ", number of nodes:", len(rrt_dubins.node_list))
+        #     rrt_dubins.node_list.append(rrt_dubins.goal)
+        #     break
 
     if i == rrt_dubins.max_iter:
         print('reached max iterations')
 
-    # Return path, which is a list of nodes leading to the goal...
+    # if max iterations reached without finding a path, return None
     return None
 
 def find_nearest_node(new_node, node_list):
@@ -129,3 +125,22 @@ def find_nearest_node(new_node, node_list):
             closest_node = node
             shortest_d = d 
     return closest_node
+
+def back_traverse_nodes(goal_node):
+    cur_node = goal_node                    # start at goal_node
+    path_node_list = []                     # initialize empty list to store path nodes
+
+    # traverse nodes until cur_node.parent = None (i.e. reached start node)
+    while cur_node:                
+        path_node_list.append(cur_node)     # append current node
+        cur_node = cur_node.parent          # reset cur_node to its parent
+
+    path_node_list.reverse()                # reverse list to start from goal_node
+
+    # FOR DEBUGGING PURPOSES
+    print("\nfinal path_node_list:")
+    for node in path_node_list:
+        node.print_node()
+    print("\n")
+
+    return path_node_list
