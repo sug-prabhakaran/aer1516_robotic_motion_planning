@@ -225,7 +225,7 @@ class RRT_dubins_problem():
         for node in self.node_list:
             if node.parent:
                 plt.plot(node.path_x, node.path_y, "-g")
-                plt.plot(node.x, node.y, "xb")
+                plt.plot(node.x, node.y, "xb")   #ADDED BY ME TO VISUALIZE VALID NODES
 
         for (ox, oy, size) in self.obstacle_list:
             self.plot_circle(ox, oy, size)
@@ -302,7 +302,7 @@ def main():
                                     obstacle_list = obstacleList, \
                                     map_area = [-2.0, 15.0, -2.0, 15.0], \
                                     max_iter=200)
-    path_node_list = rrt_dubins.rrt_planning(display_map=True)
+    path_node_list = rrt_dubins.rrt_star_planning(display_map=True)
     is_path_valid = check_path(rrt_dubins, path_node_list)
     path = get_path(path_node_list)
 

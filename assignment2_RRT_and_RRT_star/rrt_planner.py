@@ -17,7 +17,7 @@ INSTRUCTIONS
     can be tested by running RRT_DUBINS_PROBLEM.PY (check the main function).
 2.  Read all class and function documentation in RRT_DUBINS_PROBLEM carefully.
     There are plenty of helper function in the class to ease implementation.
-3.  Your solution must meet all the conditions specificed below.
+3.  Your solution must meet all the conditions specified below.
 4.  Below are some do's and don'ts for this problem as well.
 
 Conditions
@@ -117,16 +117,26 @@ def rrt_planner(rrt_dubins, display_map=False):
     return None
 
 def find_nearest_node(new_node, node_list):
-    shortest_d = 21
+    # helper function to search through ALL valid nodes and find closest node
 
-    for node in node_list:
-        d = ((new_node.x - node.x)**2 + (new_node.y - node.y)**2)**(1/2)
-        if d < shortest_d:
+    shortest_d = 21                         # initialize distance to max possible in map
+
+    for node in node_list:                  # loop through every valid node (node_list)
+        d = euclid_dist(node, new_node)     # find distance between node and new_node
+        if d < shortest_d:                  # if dist is new low, store the node and dist
             closest_node = node
             shortest_d = d 
     return closest_node
 
 def back_traverse_nodes(goal_node):
+    """
+    TASK: find shortest path from start_node to goal_node by traversing back from goal node
+    through each parent node
+    
+    INPUT: goal_node       (node)     - starting point of the back-traversal is the goal node
+    OUTPUT: path_node_list (list)     - list of nodes in order from start to goal
+    """
+
     cur_node = goal_node                    # start at goal_node
     path_node_list = []                     # initialize empty list to store path nodes
 
@@ -138,9 +148,15 @@ def back_traverse_nodes(goal_node):
     path_node_list.reverse()                # reverse list to start from goal_node
 
     # FOR DEBUGGING PURPOSES
-    print("\nfinal path_node_list:")
-    for node in path_node_list:
-        node.print_node()
-    print("\n")
+    # print("\nfinal path_node_list:")
+    # for node in path_node_list:
+    #     node.print_node()
+    # print("\n")
 
     return path_node_list
+
+def euclid_dist(node_1, node_2):
+    # helper function to calculate euclidean distance between two nodes
+    dx = node_1.x - node_2.x                # delta x
+    dy = node_1.y - node_2.y                # delta y
+    return math.sqrt(dx**2 + dy**2)         # l2 norm between two nodes
