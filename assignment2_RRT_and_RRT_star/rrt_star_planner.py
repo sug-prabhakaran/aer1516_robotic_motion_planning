@@ -69,16 +69,20 @@ def rrt_star_planner(rrt_dubins, display_map=False):
         to populate rrt_dubins.nodes_list with all valid RRT nodes.
     """
     # LOOP for max iterations
+    np.random.seed(0)                                             # set random seed value = 0
     i = 0
     while i < rrt_dubins.max_iter:
         i += 1
         print("\niter: ", i)
 
         # 1. Generate a random vehicle state (x, y, yaw)
-        position = np.around(17*np.random.rand(2)-2,1)            # random x, y between (-2, 15)
-        heading = np.deg2rad(np.around(360*np.random.rand(1),1))  # random theta between (0, 360)
-        rand_state = np.concatenate([position, heading])
-        new_node = rrt_dubins.Node(rand_state[0], rand_state[1], rand_state[2])
+        if i % 99 == 0:                                           # every 15 check goal state
+            new_node = rrt_dubins.goal
+        else:
+            position = np.around(17*np.random.rand(2)-2,1)            # random x, y between (-2, 15)
+            heading = np.deg2rad(np.around(360*np.random.rand(1),1))  # random theta between (0, 360)
+            rand_state = np.concatenate([position, heading])
+            new_node = rrt_dubins.Node(rand_state[0], rand_state[1], rand_state[2])
         print("New_node:")
         new_node.print_node()
 
@@ -112,56 +116,30 @@ def rrt_star_planner(rrt_dubins, display_map=False):
                 print("collision - skip!")
                 continue
 
-        # # 3. Check if the path between nearest node and random state has obstacle collision
-        # # Add the node to nodes_list if it is valid
-        # if rrt_dubins.check_collision(new_node):
-        #     print("no collision!")
-        #     rrt_dubins.node_list.append(new_node) # Storing all valid nodes
-        # else:
-        #     print("collision - skip!")
-        #     continue
+        # 3. Rewire neighbors in neighbor list:
+        if neighbor_list and cheapest_neighbor:
+            for node in neighbor_list:
+                if node.is_state_identical(cheapest_neighbor):
+                    continue
+                # check if cost through new_node is cheaper than current cost and rewire
+                node = rewire_node(node, new_node, rrt_dubins)
 
         # Draw current view of the map
         # PRESS ESCAPE TO EXIT
         if display_map:
-            rrt_dubins.draw_graph()
+            rrt_dubins.draw_graph()       
 
-        
-
-        # Find neighborhood of new_node and find neighbor that results in lowest cost-to-come
-        #neighbor_node_list = find_neighborhood(new_node, rrt_dubins.node_list)
-        #print(neighbor_node_list)
-        #cheapest_neighbor = find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins)
-
-        # Connect new_node to cheapest_neighbor if one exists. Otherwise, skip to next sample
-        #if cheapest_neighbor:
-        #    rrt_dubins.node_list.append(new_node)
-        #    new_node.print_node()
-        #else:
-        #    continue
-
-        # Rewire other nodes in the neighborhood
-
-
-
-
-        # Check if goal is reached
+        # 4. Backtrack from Goal Node to Start Node to Find Path 
         if new_node.is_state_identical(rrt_dubins.goal):
-            print("goal found at iter:", i)
-            # back calculate path starting at goal node and traversing each node's parent
-            path_node_list = back_traverse_nodes(new_node)
-            return path_node_list
-        
-        # # Check if new_node is close to goal
-        # if True:
-        #     print("Iters:", i, ", number of nodes:", len(rrt_dubins.node_list))
-        #     break
+            goal = new_node
 
-        if i >= 25:        #rrt_dubins.max_iter:            #DONT FORGET TO RESET
+        if i ==rrt_dubins.max_iter:
             print('reached max iterations')
-            break
+            # back calculate path starting at goal node and traversing each node's parent
+            path_node_list = back_traverse_nodes(goal)
+            return path_node_list
 
-    # Return path, which is a list of nodes leading to the goal...
+    # if max iterations reached without finding a path, return None
     return None
 
 def find_nearest_node(new_node, node_list):
@@ -183,10 +161,10 @@ def find_neighbors(new_node, node_list):
     neighbor_node_list = []                 # intialize empty list to store neighbor nodes
 
     # calculate optimal radius
-    if n >= 10:
-        r = 10*math.sqrt((math.log(n)/n))
+    if n > 10:
+        r = 25*math.sqrt((math.log(n)/n))
     else:
-        r = 4
+        r = 15
     print("radius (r):", r)
 
     # loop through valid nodes and find nodes within radius of new_node
@@ -197,9 +175,6 @@ def find_neighbors(new_node, node_list):
         d = euclid_dist(node, new_node)     # find distance between new_node and valid node
         if d < r:                           # if node is within radius, add to neighborhood
             neighbor_node_list.append(node)
-         
-        if len(neighbor_node_list) > 5:     # terminate if there are too many neighbors
-            break
 
     # if neighbor list exists, print nodes
     if neighbor_node_list:
@@ -295,3 +270,19 @@ def find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins):
 
     return cheapest_neighbor
 
+def rewire_node(node, new_node, rrt_dubins):
+    # first check if node cost-to-come would be cheaper through new_node:
+    cur_cost = node.cost        # current cost-to-come
+    cur_node = rrt_dubins.propogate(new_node, node)     # get path and cost from new_node to cur_node
+
+    if not rrt_dubins.check_collision(cur_node):        # no path exists so return original node
+        return node
+    
+    if cur_node.cost < cur_cost:                        # if cost is better, rewire node through new_node
+        node.parent = new_node
+        node.cost = cur_node.cost
+        node.path_x = cur_node.path_x
+        node.path_y = cur_node.path_y
+        node.path_yaw = cur_node.path_yaw
+
+    return node
