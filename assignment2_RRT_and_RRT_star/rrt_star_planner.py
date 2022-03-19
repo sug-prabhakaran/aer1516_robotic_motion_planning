@@ -92,6 +92,9 @@ def rrt_star_planner(rrt_dubins, display_map=False):
             if cheapest_neighbor:
                 new_node = rrt_dubins.propogate(cheapest_neighbor, new_node)
                 rrt_dubins.node_list.append(new_node)
+                print("\nadded new_node to graph: + cheapest parent")
+                new_node.print_node()
+                new_node.parent.print_node()
         # 2B. if no neighborhood exists, find nearest node and connect if possible
         else:
             print("neighbors list empty or no path to neighbors. Find nearest")
@@ -102,10 +105,12 @@ def rrt_star_planner(rrt_dubins, display_map=False):
             if rrt_dubins.check_collision(new_node):
                 print("no collision!")
                 rrt_dubins.node_list.append(new_node)           # Storing all valid nodes
+                print("\nadded new_node to graph: + nearest parent")
+                new_node.print_node()
+                new_node.parent.print_node()
             else:
                 print("collision - skip!")
                 continue
-
 
         # # 3. Check if the path between nearest node and random state has obstacle collision
         # # Add the node to nodes_list if it is valid
@@ -152,8 +157,9 @@ def rrt_star_planner(rrt_dubins, display_map=False):
         #     print("Iters:", i, ", number of nodes:", len(rrt_dubins.node_list))
         #     break
 
-    if i == 25:        #rrt_dubins.max_iter:            #DONT FORGET TO RESET
-        print('reached max iterations')
+        if i >= 25:        #rrt_dubins.max_iter:            #DONT FORGET TO RESET
+            print('reached max iterations')
+            break
 
     # Return path, which is a list of nodes leading to the goal...
     return None
@@ -252,25 +258,29 @@ def find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins):
     lowest_cost = 10000                     # initialize lowest cost
     cheapest_neighbor = None                # initialize cheapest_neighbor to node = None
 
-    print("\ncheapest_neigbhor function output:...")
+    print("\ncheapest_neighbor function output:...")
     for node in neighbor_node_list:         # iterate through each neighbor
         print("Node:")
-        node.print_node()
+        node.print_node(), print(node.cost)
         print("New_node:")
-        new_node.print_node()
+        new_node.print_node(), print(new_node.cost)
         new_node.cost = 0                   # reset new_node cost-to-come
         
         # update new_node with cost==course_length from node
         new_node = rrt_dubins.propogate(node, new_node)    
         print("New_node after prop: + cost:", new_node.cost)
         new_node.print_node()
+        new_node.parent.print_node()
 
         # if path from node to new_node is obstructed, skip to next node
-        if rrt_dubins.check_collision(new_node):
+        if not rrt_dubins.check_collision(new_node):
+            print("possible cheapest neigbhor collided")
             continue
 
         # if new cost-to-come is lower, update cheapest node
-        if new_node.cost < lowest_cost:          
+        if new_node.cost < lowest_cost:
+            print("new cheapest neigbhor:")
+            node.print_node()   
             cheapest_neighbor = node
             lowest_cost = new_node.cost
     
@@ -280,6 +290,8 @@ def find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins):
         return
 
     new_node.cost = 0                       # reset new_node
+    print("cheapest neighbor:")
+    cheapest_neighbor.print_node()
 
     return cheapest_neighbor
 
