@@ -240,7 +240,18 @@ def find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins):
     return cheapest_neighbor
 
 def rewire_node(node, new_node, rrt_dubins):
-    # first check if node cost-to-come would be cheaper through new_node:
+    """
+    TASK: rewire neighboring node of new_node if it has a lower cost-to-come through new_node
+
+    INPUT:
+    node                (node)  - neighbor node within radius of interest of new_node
+    new_node            (node)  - node that neighbors were found for and potential new parent node
+    rrt_dubins          (obj)   - dubin_path_problem object to use propogate, collision check
+                                  functions
+    OUTPUT: 
+    node                (node)  - node updated with potentially new parent, cost-to-come and paths
+    """
+
     cur_cost = node.cost        # current cost-to-come
     cur_node = rrt_dubins.propogate(new_node, node)     # get path and cost from new_node to cur_node
 
