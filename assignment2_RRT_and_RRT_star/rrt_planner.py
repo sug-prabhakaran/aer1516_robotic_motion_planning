@@ -2,7 +2,6 @@
 Assignment #2 Template file
 """
 import random
-import time #REMOVE
 import math
 import numpy as np
 

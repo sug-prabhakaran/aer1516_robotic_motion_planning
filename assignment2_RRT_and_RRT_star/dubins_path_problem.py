@@ -306,12 +306,12 @@ def main():
     is_path_valid = check_path(rrt_dubins, path_node_list)
     path = get_path(path_node_list)
 
-    # if not path:
-    #     print(f'Test Failed: Given path is empty\n Visualize the path to debug')
-    #     return
-    # if not is_path_valid:
-    #     print(f'Test Failed: Given path is not valid\n Visualize the path to debug')
-    #     return
+    if not path:
+        print(f'Test Failed: Given path is empty\n Visualize the path to debug')
+        return
+    if not is_path_valid:
+        print(f'Test Failed: Given path is not valid\n Visualize the path to debug')
+        return
 
     print("start:", start, "goal:", goal)
     print("bounds:", rrt_dubins.x_lim, rrt_dubins.y_lim)
