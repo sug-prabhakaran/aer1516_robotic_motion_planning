@@ -69,11 +69,12 @@ def rrt_star_planner(rrt_dubins, display_map=False):
         to populate rrt_dubins.nodes_list with all valid RRT nodes.
     """
     # LOOP for max iterations
-    np.random.seed(0)                                             # set random seed value = 0
+    #np.random.seed(0)                                            # set random seed value = 0
+    rrt_dubins.node_list = [rrt_dubins.start]                     # reset node_list for each iteration
+    path_node_list = []                                           # initialize to clear for multiple runs
     i = 0
     while i < rrt_dubins.max_iter:
         i += 1
-        print("\niter: ", i)
 
         # 1. Generate a random vehicle state (x, y, yaw)
         if i % 99 == 0:                                           # every 15 check goal state
@@ -83,8 +84,6 @@ def rrt_star_planner(rrt_dubins, display_map=False):
             heading = np.deg2rad(np.around(360*np.random.rand(1),1))  # random theta between (0, 360)
             rand_state = np.concatenate([position, heading])
             new_node = rrt_dubins.Node(rand_state[0], rand_state[1], rand_state[2])
-        print("New_node:")
-        new_node.print_node()
 
         # 2. Find neighborhood around new_node
         neighbor_list = find_neighbors(new_node, rrt_dubins.node_list)
@@ -96,24 +95,16 @@ def rrt_star_planner(rrt_dubins, display_map=False):
             if cheapest_neighbor:
                 new_node = rrt_dubins.propogate(cheapest_neighbor, new_node)
                 rrt_dubins.node_list.append(new_node)
-                print("\nadded new_node to graph: + cheapest parent")
-                new_node.print_node()
-                new_node.parent.print_node()
+
         # 2B. if no neighborhood exists, find nearest node and connect if possible
         else:
-            print("neighbors list empty or no path to neighbors. Find nearest")
             nearest_node = find_nearest_node(new_node, rrt_dubins.node_list)
             new_node = rrt_dubins.propogate(nearest_node, new_node)
             
             # check if path to nearest node has collisions
             if rrt_dubins.check_collision(new_node):
-                print("no collision!")
                 rrt_dubins.node_list.append(new_node)           # Storing all valid nodes
-                print("\nadded new_node to graph: + nearest parent")
-                new_node.print_node()
-                new_node.parent.print_node()
             else:
-                print("collision - skip!")
                 continue
 
         # 3. Rewire neighbors in neighbor list:
@@ -156,7 +147,6 @@ def find_nearest_node(new_node, node_list):
 
 def find_neighbors(new_node, node_list):
     # helper function to find all neighboring nodes within a defined radius
-    print("\nneigbhorhood function...")
     n = len(node_list)                      # number of nodes (n)
     neighbor_node_list = []                 # intialize empty list to store neighbor nodes
 
@@ -165,7 +155,6 @@ def find_neighbors(new_node, node_list):
         r = 25*math.sqrt((math.log(n)/n))
     else:
         r = 15
-    print("radius (r):", r)
 
     # loop through valid nodes and find nodes within radius of new_node
     for node in node_list:
@@ -175,12 +164,6 @@ def find_neighbors(new_node, node_list):
         d = euclid_dist(node, new_node)     # find distance between new_node and valid node
         if d < r:                           # if node is within radius, add to neighborhood
             neighbor_node_list.append(node)
-
-    # if neighbor list exists, print nodes
-    if neighbor_node_list:
-        print("--neigbor list function results:")   
-        for node in neighbor_node_list:
-            node.print_node()
 
     return neighbor_node_list
 
@@ -202,12 +185,6 @@ def back_traverse_nodes(goal_node):
         cur_node = cur_node.parent          # reset cur_node to its parent
 
     path_node_list.reverse()                # reverse list to start from goal_node
-
-    # FOR DEBUGGING PURPOSES
-    print("\nfinal path_node_list:")
-    for node in path_node_list:
-        node.print_node()
-    print("\n")
 
     return path_node_list
 
@@ -233,29 +210,20 @@ def find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins):
     lowest_cost = 10000                     # initialize lowest cost
     cheapest_neighbor = None                # initialize cheapest_neighbor to node = None
 
-    print("\ncheapest_neighbor function output:...")
     for node in neighbor_node_list:         # iterate through each neighbor
-        print("Node:")
-        node.print_node(), print(node.cost)
-        print("New_node:")
-        new_node.print_node(), print(new_node.cost)
         new_node.cost = 0                   # reset new_node cost-to-come
         
         # update new_node with cost==course_length from node
-        new_node = rrt_dubins.propogate(node, new_node)    
-        print("New_node after prop: + cost:", new_node.cost)
-        new_node.print_node()
-        new_node.parent.print_node()
+        new_node = rrt_dubins.propogate(node, new_node)
+        if not new_node:
+            continue
 
         # if path from node to new_node is obstructed, skip to next node
         if not rrt_dubins.check_collision(new_node):
-            print("possible cheapest neigbhor collided")
             continue
 
         # if new cost-to-come is lower, update cheapest node
         if new_node.cost < lowest_cost:
-            print("new cheapest neigbhor:")
-            node.print_node()   
             cheapest_neighbor = node
             lowest_cost = new_node.cost
     
@@ -265,8 +233,6 @@ def find_cheapest_neighbor(new_node, neighbor_node_list, rrt_dubins):
         return
 
     new_node.cost = 0                       # reset new_node
-    print("cheapest neighbor:")
-    cheapest_neighbor.print_node()
 
     return cheapest_neighbor
 
