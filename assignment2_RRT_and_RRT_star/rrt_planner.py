@@ -69,7 +69,6 @@ def rrt_planner(rrt_dubins, display_map=False):
         to populate rrt_dubins.nodes_list with all valid RRT nodes.
     """
     # LOOP for max iterations
-    #np.random.seed(0)                                                 # set random seed value = 0
     rrt_dubins.node_list = [rrt_dubins.start]                         # reset node_list for each iteration
     path_node_list = []                                               # initialize to clear for multiple runs
     i = 0

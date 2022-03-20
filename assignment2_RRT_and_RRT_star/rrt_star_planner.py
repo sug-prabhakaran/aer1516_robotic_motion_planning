@@ -69,7 +69,6 @@ def rrt_star_planner(rrt_dubins, display_map=False):
         to populate rrt_dubins.nodes_list with all valid RRT nodes.
     """
     # LOOP for max iterations
-    #np.random.seed(0)                                            # set random seed value = 0
     rrt_dubins.node_list = [rrt_dubins.start]                     # reset node_list for each iteration
     path_node_list = []                                           # initialize to clear for multiple runs
     i = 0
@@ -99,8 +98,11 @@ def rrt_star_planner(rrt_dubins, display_map=False):
         # 2B. if no neighborhood exists, find nearest node and connect if possible
         else:
             nearest_node = find_nearest_node(new_node, rrt_dubins.node_list)
+            if not nearest_node:
+                continue
             new_node = rrt_dubins.propogate(nearest_node, new_node)
-            
+            if not new_node:
+                continue
             # check if path to nearest node has collisions
             if rrt_dubins.check_collision(new_node):
                 rrt_dubins.node_list.append(new_node)           # Storing all valid nodes
@@ -123,12 +125,12 @@ def rrt_star_planner(rrt_dubins, display_map=False):
         # 4. Backtrack from Goal Node to Start Node to Find Path 
         if new_node.is_state_identical(rrt_dubins.goal):
             goal = new_node
-
-        if i ==rrt_dubins.max_iter:
-            print('reached max iterations')
             # back calculate path starting at goal node and traversing each node's parent
             path_node_list = back_traverse_nodes(goal)
             return path_node_list
+
+    if i==rrt_dubins.max_iter:
+        print('reached max iterations: path not found')
 
     # if max iterations reached without finding a path, return None
     return None
@@ -136,7 +138,8 @@ def rrt_star_planner(rrt_dubins, display_map=False):
 def find_nearest_node(new_node, node_list):
     # helper function to search through ALL valid nodes and find closest node
 
-    shortest_d = 21                         # initialize distance to max possible in map
+    shortest_d = 50                         # initialize distance to max possible in map
+    closest_node = None                     # initialize closest_node
 
     for node in node_list:                  # loop through every valid node (node_list)
         d = euclid_dist(node, new_node)     # find distance between node and new_node

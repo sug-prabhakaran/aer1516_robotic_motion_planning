@@ -67,13 +67,13 @@ def main():
             rrt_star_time_list.append(elapsed_time)
             
             # plot the last graph for report
-            if i == 9:
+            if i == 999:
                 path = dpp.get_path(path_node_list)
                 rrt_dubins.draw_graph()
                 plt.plot([x for (x, y) in path], [y for (x, y) in path], '-r')
                 plt.grid(True)
                 plt.pause(0.001) # Necessary for macs
-                plt.savefig('rrt_star_on_iter_999.png', dpi=600)
+                plt.savefig('rrt_star_on_iter_9.png', dpi=600)
                 plt.show()
         else:
             print("iter: ", i, "not found")
@@ -86,8 +86,10 @@ def main():
     rrt_star_avg_cost = sum(rrt_star_cost_list)/len(rrt_star_cost_list)
     rrt_star_avg_time = sum(rrt_star_time_list)/len(rrt_star_time_list)
     num_rrt_star_failed = len(rrt_star_not_found_list)
-    print("No. failed RRT attempts:", num_rrt_failed)
-    print("No. failed RRT* attempts:", num_rrt_star_failed)
+    print("\n---COMPARISON RESULTS---")
+    print("No. failed attempts (RRT vs RRT*):", num_rrt_failed, num_rrt_star_failed)
+    print("Average calc. time (RRT vs RRT*):", rrt_avg_time, rrt_star_avg_time)
+    print("Average cost-to-goal (RRT vs RRT*):", rrt_avg_cost, rrt_star_avg_cost)
 
     #Plot Figure
     plt.style.use('ggplot')
@@ -96,7 +98,7 @@ def main():
     ax.bar([0],[rrt_avg_cost], color='#0485d1', label='RRT', width=0.3)
     ax.bar([0.3],[rrt_star_avg_cost], color='red', label='RRT*', alpha=0.7, width=0.3)
     ax.set_ylabel('Avg. cost to goal')
-    ax.set_xlabel('Comparison of RRT vs. RRT*')
+    ax.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
     ax.legend(facecolor='white')
     ax.set_title("Comparison of Cost-to-goal and Calculation Time for RRT and RRT*")
     ax2= ax.twinx()
