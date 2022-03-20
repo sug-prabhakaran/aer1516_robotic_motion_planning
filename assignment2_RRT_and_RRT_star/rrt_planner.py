@@ -2,6 +2,7 @@
 Assignment #2 Template file
 """
 import random
+import time #REMOVE
 import math
 import numpy as np
 
@@ -68,7 +69,9 @@ def rrt_planner(rrt_dubins, display_map=False):
         to populate rrt_dubins.nodes_list with all valid RRT nodes.
     """
     # LOOP for max iterations
-    np.random.seed(0)                                                 # set random seed value = 0
+    #np.random.seed(0)                                                 # set random seed value = 0
+    rrt_dubins.node_list = [rrt_dubins.start]                         # reset node_list for each iteration
+    path_node_list = []                                               # initialize to clear for multiple runs
     i = 0
     while i < rrt_dubins.max_iter:
         i += 1
@@ -100,16 +103,13 @@ def rrt_planner(rrt_dubins, display_map=False):
 
         # Check if goal is reached
         if new_node.is_state_identical(rrt_dubins.goal):
-            print("goal found at iter:", i)
+            #print("goal found at iter:", i)
             # back calculate path starting at goal node and traversing each node's parent
             path_node_list = back_traverse_nodes(new_node)
+            # print('\nFinal Node List:...')
+            # for node in rrt_dubins.node_list:
+            #     node.print_node()
             return path_node_list
-        
-        # # Check if new_node is close to goal
-        # if rrt_dubins.calc_dist_to_goal(new_node.x, new_node.y) < 1:
-        #     print("Iters:", i, ", number of nodes:", len(rrt_dubins.node_list))
-        #     rrt_dubins.node_list.append(rrt_dubins.goal)
-        #     break
 
     if i == rrt_dubins.max_iter:
         print('reached max iterations')
@@ -147,12 +147,6 @@ def back_traverse_nodes(goal_node):
         cur_node = cur_node.parent          # reset cur_node to its parent
 
     path_node_list.reverse()                # reverse list to start from goal_node
-
-    # FOR DEBUGGING PURPOSES
-    # print("\nfinal path_node_list:")
-    # for node in path_node_list:
-    #     node.print_node()
-    # print("\n")
 
     return path_node_list
 
