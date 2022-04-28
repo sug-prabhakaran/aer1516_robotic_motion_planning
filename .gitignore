@@ -1,0 +1,4 @@
+# ignore assignment 2 files:
+assignment2_RRT_and_RRT_star/handin.tar
+assignment2_RRT_and_RRT_star/rrt_planner.py
+assignment2_RRT_and_RRT_star/rrt_star_planner.py
