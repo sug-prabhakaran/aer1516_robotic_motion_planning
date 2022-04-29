@@ -24,7 +24,9 @@ This assignment document was removed from this repo as per University of Toronto
 In assignment 2, I implemented both the rapidly-expanding random tree (RRT) and RRT* algorithms for a robot complying with dubin's path kinematic constraints.  I then compared the performance of these two algorithms with the results shown in the PDF document.
 
 <p align="center">
+  <b>Example Output of RRT Algorithm with Dubin's Path</b>
   <img src="/assignment2_RRT_and_RRT_star/img_rrt_on_iter_999.png" width="350" title="Example Output of RRT Algorithm with Dubin's Path">
+  <b>Example Output of RRT* Algorithm with Dubin's Path</b>
   <img src="/assignment2_RRT_and_RRT_star/img_rrt_star_on_iter_9.png" width="350" title="Example Output of RRT* Algorithm with Dubin's Path">
   <img src="/assignment2_RRT_and_RRT_star/img_comparison_rrt_rrt_star.png" width="350" title="Comparison of Performance of Both Algorithms">
 </p>
@@ -33,6 +35,7 @@ The code for this assignment was removed also as per University of Toronto polic
 
 ## Paper Presentation
 
+The paper presentation was on the paper by Nardi \[1\] on path planning in an uncertain environment.  The attached jupyter notebook was used to outline the main steps of the algorithm outlined in the paper and to produce graphics to visualize the uncertainty and posterior of the position of the robot in a discrete grid.  Please see the jupyter notebook for more details.
 
 
 ## Packages Used
@@ -44,4 +47,6 @@ The code for this assignment was removed also as per University of Toronto polic
 
 ## References
 
-1. 
+\[1\] L. Nardi and C. Stachniss, "Uncertainty-Aware Path Planning for Navigation on Road Networks Using Augmented MDPS," in 2019 International Conference on Robotics and Automation (ICRA), May 20-24, 2019, Montreal, Canada \[Online\]. Available: IEEE Xplore, https://ieeexplore.ieee.org/document/8794121. [Accessed: 01 March 2022].
+
+\[2\] O. Vysotska and C. Stachniss, "Improving SLAM by Exploiting Building Information from Publicly Available Maps and Localization Priors," PFG- Journal of Photogrammetry, Remote Sensing and Geoinformation Science, vol. 85, pp. 53-65, 21 February 2017. \[Online\]. Available: Springer Link, https://link.springer.com/article/10.1007/s41064-017-0006-3. [Accessed: 08 March 2022].
