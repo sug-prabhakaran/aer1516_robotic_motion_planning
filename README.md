@@ -26,6 +26,7 @@ In assignment 2, I implemented both the rapidly-expanding random tree (RRT) and 
 <p align="center">
   <b>Example Output of RRT Algorithm with Dubin's Path</b>
   <img src="/assignment2_RRT_and_RRT_star/img_rrt_on_iter_999.png" width="350" title="Example Output of RRT Algorithm with Dubin's Path">
+  
   <b>Example Output of RRT* Algorithm with Dubin's Path</b>
   <img src="/assignment2_RRT_and_RRT_star/img_rrt_star_on_iter_9.png" width="350" title="Example Output of RRT* Algorithm with Dubin's Path">
   <img src="/assignment2_RRT_and_RRT_star/img_comparison_rrt_rrt_star.png" width="350" title="Comparison of Performance of Both Algorithms">
