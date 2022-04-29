@@ -21,14 +21,21 @@ This assignment document was removed from this repo as per University of Toronto
 
 ## Assignment 2 - Implementing RRT and RRT* Algorithms
 
-In assignment 2, I implemented both the rapidly-expanding random tree (RRT) and RRT* algorithms for a robot complying with dubin's path kinematic constraints.  I then compared the performance of these two algorithms with the results shown in the PDF document.
+In assignment 2, I implemented both the rapidly-expanding random tree (RRT) and RRT* algorithms for a robot complying with dubin's path kinematic constraints.  I then compared the performance of these two algorithms with the results shown in the PDF document and below in Figure 3.
+
+Figure 1 and 2 depict an example of a particular random instance of each RRT and RRT* algorithm respectively using Dubin's path constraints.
 
 <p align="center">
-  <b>Example Output of RRT Algorithm with Dubin's Path</b>
+  <b>Figure 1 - Example Output of RRT Algorithm with Dubin's Path</b>
   <img src="/assignment2_RRT_and_RRT_star/img_rrt_on_iter_999.png" width="350" title="Example Output of RRT Algorithm with Dubin's Path">
-  
-  <b>Example Output of RRT* Algorithm with Dubin's Path</b>
+</p>
+
+<p align="center">
+  <b>Figure 2 - Example Output of RRT* Algorithm with Dubin's Path</b>
   <img src="/assignment2_RRT_and_RRT_star/img_rrt_star_on_iter_9.png" width="350" title="Example Output of RRT* Algorithm with Dubin's Path">
+</p>
+<p align="center">
+  <b>Figure 3 - Comparison of Performance of RRT vs RRT* Algorithms</b>
   <img src="/assignment2_RRT_and_RRT_star/img_comparison_rrt_rrt_star.png" width="350" title="Comparison of Performance of Both Algorithms">
 </p>
 
