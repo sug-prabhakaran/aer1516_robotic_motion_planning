@@ -23,22 +23,25 @@ This assignment document was removed from this repo as per University of Toronto
 
 In assignment 2, I implemented both the rapidly-expanding random tree (RRT) and RRT* algorithms for a robot complying with dubin's path kinematic constraints.  I then compared the performance of these two algorithms with the results shown in the PDF document.
 
-![Example Output of RRT](/assignment2_RRT_and_RRT_star/img_rrt_on_iter_999.png)
-
-![Example Output of RRT*](/assignment2_RRT_and_RRT_star/img_rrt_star_on_iter_9.png)
-
-![Comparison of RRT and RRT*](/assignment2_RRT_and_RRT_star/img_comparison_rrt_rrt_star.png)
+<p align="center">
+  <img src="/assignment2_RRT_and_RRT_star/img_rrt_on_iter_999.png" width="350" title="Example Output of RRT Algorithm with Dubin's Path">
+  <img src="/assignment2_RRT_and_RRT_star/img_rrt_star_on_iter_9.png" width="350" title="Example Output of RRT* Algorithm with Dubin's Path">
+  <img src="/assignment2_RRT_and_RRT_star/img_comparison_rrt_rrt_star.png" width="350" title="Comparison of Performance of Both Algorithms">
+</p>
 
 The code for this assignment was removed also as per University of Toronto policy.
 
-## Paper Pres
+## Paper Presentation
+
+
 
 ## Packages Used
 
 * python           - version 3.7.7
 * numpy            - version 1.19.1
 * matplotlib       - version 3.3.1
+* scipy            - version 2.18.2
 
 ## References
 
-1. **Gurobi Optimizer:** Gurobi is an industrial mixed-integer
+1. 
